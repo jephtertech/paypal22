@@ -147,6 +147,16 @@
             color: var(--success);
         }
         
+        .btn-table.approve {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+        }
+        
+        .btn-table.reject {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+        
         .btn-table:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-sm);
@@ -238,6 +248,211 @@
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Stats Grid */
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .admin-stat-card.users {
+            border-top: 4px solid var(--accent-blue);
+        }
+        
+        .admin-stat-card.balance {
+            border-top: 4px solid var(--success);
+        }
+        
+        .admin-stat-card.transactions {
+            border-top: 4px solid var(--warning);
+        }
+        
+        .admin-stat-card.admins {
+            border-top: 4px solid var(--danger);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        /* Quick Actions Grid */
+        .admin-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .admin-action-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .admin-action-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .admin-action-icon {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+        }
+        
+        /* Status badges */
+        .status-pending {
+            color: #f39c12;
+            background: #fef5e7;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .status-completed {
+            color: #27ae60;
+            background: #eafaf1;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .status-approved {
+            color: #2980b9;
+            background: #eaf2f8;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .status-rejected {
+            color: #e74c3c;
+            background: #fdedec;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        /* Activation status */
+        .activation-status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .activation-true {
+            background: rgba(39, 174, 96, 0.1);
+            color: #27ae60;
+        }
+        
+        .activation-false {
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+        }
+        
+        /* Gift card image viewer */
+        .image-viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .image-viewer-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+        
+        .image-viewer-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 10px;
+        }
+        
+        .close-viewer {
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Image thumbnails */
+        .image-thumbnail {
+            width: 80px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .image-thumbnail:hover {
+            transform: scale(1.1);
+            border-color: #0070ba;
+        }
+        
+        /* Notification badge */
+        .notification-badge {
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 5px;
+        }
+        
+        /* Card details styling */
+        .card-details-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background: #f8f9fa;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #e0e3e7;
+        }
     </style>
 </head>
 <body class="admin-dashboard">
@@ -262,6 +477,14 @@
                     <i class="fas fa-exchange-alt"></i>
                     Transactions
                 </a>
+                <a href="#" class="nav-button" onclick="showSection('giftCard')">
+                    <i class="fas fa-gift"></i>
+                    Gift Cards
+                </a>
+                <a href="#" class="nav-button" onclick="showSection('cardDetails')">
+                    <i class="fas fa-id-card"></i>
+                    Card Details
+                </a>
                 <a href="#" class="nav-button" onclick="showSection('logs')">
                     <i class="fas fa-history"></i>
                     Logs
@@ -273,6 +496,14 @@
             </div>
         </div>
     </nav>
+
+    <!-- Image Viewer Modal -->
+    <div class="image-viewer-modal" id="imageViewer">
+        <div class="image-viewer-content">
+            <button class="close-viewer" onclick="closeImageViewer()">×</button>
+            <img id="viewedImage" src="" alt="Full size image">
+        </div>
+    </div>
 
     <div class="container">
         <!-- Welcome Section -->
@@ -292,7 +523,7 @@
             <div class="admin-stat-card users">
                 <div class="stat-label">Total Users</div>
                 <div class="stat-value" id="statUsers">0</div>
-                <div><i class="fas fa-user-plus"></i> <span id="statNewUsers">0</span> new today</div>
+                <div><i class="fas fa-user-plus"></i> <span id="statActivatedUsers">0</span> activated</div>
             </div>
             <div class="admin-stat-card balance">
                 <div class="stat-label">Total Balance</div>
@@ -305,9 +536,9 @@
                 <div><i class="fas fa-exchange-alt"></i> <span id="statTodayTx">0</span> today</div>
             </div>
             <div class="admin-stat-card admins">
-                <div class="stat-label">Administrators</div>
-                <div class="stat-value" id="statAdmins">1</div>
-                <div><i class="fas fa-user-shield"></i> Active admins</div>
+                <div class="stat-label">Pending Gift Cards</div>
+                <div class="stat-value" id="statPendingGiftCards">0</div>
+                <div><i class="fas fa-gift"></i> <span id="statTodayCard">0</span> require action</div>
             </div>
         </div>
 
@@ -327,12 +558,12 @@
                 <h3>Add Funds</h3>
                 <p>Add money to any user's account instantly</p>
             </div>
-            <div class="admin-action-card" onclick="showSection('users')">
+            <div class="admin-action-card" onclick="showSection('giftCard')">
                 <div class="admin-action-icon">
-                    <i class="fas fa-cog"></i>
+                    <i class="fas fa-check-circle"></i>
                 </div>
-                <h3>Manage System</h3>
-                <p>Configure system settings and preferences</p>
+                <h3>Approve Gift Cards</h3>
+                <p>Review and approve pending gift card submissions</p>
             </div>
         </div>
 
@@ -360,7 +591,7 @@
                                 <th>Email</th>
                                 <th>Balance</th>
                                 <th>Role</th>
-                                <th>Status</th>
+                                <th>Activated</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -376,22 +607,85 @@
         <div id="transactionsSection" style="display: none;">
             <div class="data-table">
                 <div class="table-header">
-                    <h3><i class="fas fa-exchange-alt"></i> Transaction History</h3>
+                    <h3><i class="fas fa-exchange-alt"></i> Activation Transactions</h3>
                 </div>
                 <div class="table-container">
                     <table id="transactionsTable">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Type</th>
-                                <th>From</th>
-                                <th>To</th>
+                                <th>User</th>
+                                <th>Method</th>
                                 <th>Amount</th>
+                                <th>Status</th>
                                 <th>Time</th>
+                                <th>Details</th>
                             </tr>
                         </thead>
                         <tbody id="transactionsTableBody">
                             <!-- Transactions will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gift Card Submissions Table -->
+        <div id="giftCardSection" style="display: none;">
+            <div class="data-table">
+                <div class="table-header">
+                    <h3><i class="fas fa-gift"></i> Gift Card Submissions</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-primary" onclick="loadGiftCardSubmissions()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="giftCardTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Amount</th>
+                                <th>Images</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="giftCardTableBody">
+                            <!-- Gift card submissions will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Details Table -->
+        <div id="cardDetailsSection" style="display: none;">
+            <div class="data-table">
+                <div class="table-header">
+                    <h3><i class="fas fa-id-card"></i> Card Payment Details</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-primary" onclick="loadCardDetails()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="cardDetailsTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Card Details</th>
+                                <th>Amount</th>
+                                <th>Time</th>
+                                <th>IP Address</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cardDetailsTableBody">
+                            <!-- Card details will be loaded here -->
                         </tbody>
                     </table>
                 </div>
@@ -403,6 +697,11 @@
             <div class="data-table">
                 <div class="table-header">
                     <h3><i class="fas fa-history"></i> Admin Activity Logs</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-primary" onclick="loadLogs()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
                 </div>
                 <div class="table-container">
                     <table id="logsTable">
@@ -497,18 +796,39 @@
     </div>
 
     <script>
+        // Global variables
+        let pendingGiftCardsCount = 0;
+
         // Load admin data
-        fetch('/api/admin/stats')
-            .then(res => res.json())
-            .then(stats => {
-                document.getElementById('statUsers').textContent = stats.totalUsers;
-                document.getElementById('statBalance').textContent = '$' + stats.totalBalance.toFixed(2);
-                document.getElementById('statTransactions').textContent = stats.totalTransactions;
-                document.getElementById('statTodayTx').textContent = stats.todayTransactions;
-                document.getElementById('statAdmins').textContent = stats.admins;
-                // Simulate new users for demo
-                document.getElementById('statNewUsers').textContent = Math.floor(Math.random() * 10);
-            });
+        function loadAdminStats() {
+            fetch('/api/admin/stats')
+                .then(res => res.json())
+                .then(stats => {
+                    document.getElementById('statUsers').textContent = stats.totalUsers;
+                    document.getElementById('statBalance').textContent = '$' + stats.totalBalance.toFixed(2);
+                    document.getElementById('statTransactions').textContent = stats.totalTransactions;
+                    document.getElementById('statTodayTx').textContent = stats.todayTransactions;
+                    document.getElementById('statCardPayments').textContent = stats.totalCardPayments || 0;
+                    document.getElementById('statTodayCard').textContent = stats.todayCardPayments || 0;
+                    document.getElementById('statActivatedUsers').textContent = stats.activatedUsers;
+                    document.getElementById('statPendingGiftCards').textContent = stats.pendingActivations || 0;
+                    
+                    pendingGiftCardsCount = stats.pendingActivations || 0;
+                    
+                    // Update gift card nav badge
+                    const giftCardNav = document.querySelector('[onclick*="giftCard"]');
+                    if (giftCardNav && pendingGiftCardsCount > 0) {
+                        if (!document.querySelector('.notification-badge')) {
+                            const badge = document.createElement('span');
+                            badge.className = 'notification-badge';
+                            badge.textContent = pendingGiftCardsCount;
+                            giftCardNav.appendChild(badge);
+                        } else {
+                            document.querySelector('.notification-badge').textContent = pendingGiftCardsCount;
+                        }
+                    }
+                });
+        }
 
         // Load users
         function loadUsers() {
@@ -521,7 +841,7 @@
                     Object.entries(users).forEach(([id, user]) => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td><code>${id}</code></td>
+                            <td><code>${id.substring(0, 8)}...</code></td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 10px;">
                                     <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #0070ba, #009cde); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
@@ -533,7 +853,11 @@
                             <td>${user.email}</td>
                             <td><strong>$${user.balance.toFixed(2)}</strong></td>
                             <td><span class="user-role role-${user.role}">${user.role.toUpperCase()}</span></td>
-                            <td><span class="status-${user.status || 'active'}">${user.status || 'active'}</span></td>
+                            <td>
+                                <span class="activation-status activation-${user.activated ? 'true' : 'false'}">
+                                    ${user.activated ? 'ACTIVATED' : 'NOT ACTIVATED'}
+                                </span>
+                            </td>
                             <td>
                                 <div class="action-btns">
                                     <button class="btn-table edit" onclick="editUser('${user.email}')">
@@ -573,14 +897,21 @@
             document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             
+            // Hide all sections
             document.getElementById('usersSection').style.display = 'none';
             document.getElementById('transactionsSection').style.display = 'none';
+            document.getElementById('giftCardSection').style.display = 'none';
+            document.getElementById('cardDetailsSection').style.display = 'none';
             document.getElementById('logsSection').style.display = 'none';
             
+            // Show selected section
             document.getElementById(section + 'Section').style.display = 'block';
             
+            // Load data for the section
             if (section === 'users') loadUsers();
             if (section === 'transactions') loadTransactions();
+            if (section === 'giftCard') loadGiftCardSubmissions();
+            if (section === 'cardDetails') loadCardDetails();
             if (section === 'logs') loadLogs();
         }
 
@@ -687,6 +1018,7 @@
                     alert('✅ User created successfully!');
                     closeModal('addUserModal');
                     loadUsers();
+                    loadAdminStats();
                 } else {
                     alert('❌ Error: ' + result.error);
                 }
@@ -709,6 +1041,7 @@
                     alert(`✅ Added $${data.amount} to ${result.user.name}'s account (${result.user.email})`);
                     closeModal('addFundsModal');
                     loadUsers();
+                    loadAdminStats();
                 } else {
                     alert('❌ Error: ' + result.error);
                 }
@@ -717,8 +1050,27 @@
 
         // Edit user function
         function editUser(userEmail) {
-            alert('Edit user functionality for: ' + userEmail);
-            // You can implement edit modal here
+            const newStatus = prompt('Enter new status (active/inactive):', 'active');
+            if (newStatus) {
+                fetch('/api/admin/update-user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email: userEmail, 
+                        field: 'status', 
+                        value: newStatus 
+                    })
+                })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('✅ User status updated!');
+                        loadUsers();
+                    } else {
+                        alert('❌ Error: ' + result.error);
+                    }
+                });
+            }
         }
 
         // Delete user function
@@ -734,6 +1086,7 @@
                     if (result.success) {
                         alert('✅ User deleted successfully!');
                         loadUsers();
+                        loadAdminStats();
                     } else {
                         alert('❌ Error: ' + result.error);
                     }
@@ -743,6 +1096,7 @@
 
         // Load users on page load
         loadUsers();
+        loadAdminStats();
 
         // Update last update time
         function updateTime() {
@@ -771,16 +1125,247 @@
                     transactions.forEach(tx => {
                         const row = document.createElement('tr');
                         const date = new Date(tx.timestamp).toLocaleString();
+                        let statusBadge = '';
+                        if (tx.status === 'pending') {
+                            statusBadge = '<span class="status-pending">Pending</span>';
+                        } else if (tx.status === 'completed') {
+                            statusBadge = '<span class="status-completed">Completed</span>';
+                        } else {
+                            statusBadge = '<span>' + (tx.status || 'N/A') + '</span>';
+                        }
+                        
                         row.innerHTML = `
-                            <td><code>${tx.type}_${tx.timestamp}</code></td>
-                            <td>${tx.type}</td>
-                            <td>${tx.fromName || tx.from}</td>
-                            <td>${tx.toName || tx.to}</td>
-                            <td><strong>$${tx.amount.toFixed(2)}</strong></td>
+                            <td>${tx.fromName}</td>
+                            <td>${tx.paymentMethod || 'N/A'}</td>
+                            <td><strong>$${tx.amount?.toFixed(2) || '0.00'}</strong></td>
+                            <td>${statusBadge}</td>
                             <td>${date}</td>
+                            <td>${tx.note || ''}</td>
                         `;
                         tbody.appendChild(row);
                     });
+                });
+        }
+
+        // Load gift card submissions
+        function loadGiftCardSubmissions() {
+            fetch('/api/admin/gift-card-submissions')
+                .then(res => res.json())
+                .then(submissions => {
+                    const tbody = document.getElementById('giftCardTableBody');
+                    tbody.innerHTML = '';
+                    
+                    submissions.forEach(sub => {
+                        const row = document.createElement('tr');
+                        const date = new Date(sub.timestamp).toLocaleString();
+                        
+                        // Determine status badge
+                        let statusBadge = '';
+                        if (sub.status === 'pending') {
+                            statusBadge = '<span class="status-pending">Pending</span>';
+                        } else if (sub.status === 'approved') {
+                            statusBadge = '<span class="status-approved">Approved</span>';
+                        } else if (sub.status === 'rejected') {
+                            statusBadge = '<span class="status-rejected">Rejected</span>';
+                        } else {
+                            statusBadge = '<span>' + (sub.status || 'N/A') + '</span>';
+                        }
+                        
+                        row.innerHTML = `
+                            <td>
+                                <strong>${sub.userName}</strong><br>
+                                <small>ID: ${sub.userId?.substring(0, 8) || 'N/A'}...</small>
+                            </td>
+                            <td>${sub.userEmail}</td>
+                            <td><strong>$${sub.activationFee?.toFixed(2) || '0.00'}</strong></td>
+                            <td>
+                                <div style="display: flex; gap: 10px;">
+                                    <div style="cursor: pointer;" onclick="viewImage('/uploads/${sub.images?.front}')">
+                                        <img src="/uploads/${sub.images?.front}" class="image-thumbnail" alt="Front">
+                                        <small>Front</small>
+                                    </div>
+                                    <div style="cursor: pointer;" onclick="viewImage('/uploads/${sub.images?.back}')">
+                                        <img src="/uploads/${sub.images?.back}" class="image-thumbnail" alt="Back">
+                                        <small>Back</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${statusBadge}</td>
+                            <td>${date}</td>
+                            <td>
+                                ${sub.status === 'pending' ? 
+                                    `<div style="display: flex; gap: 5px;">
+                                        <button class="btn-table approve" onclick="approveGiftCard('${sub.timestamp}', '${sub.userName}')">
+                                            <i class="fas fa-check"></i> Approve
+                                        </button>
+                                        <button class="btn-table reject" onclick="rejectGiftCard('${sub.timestamp}', '${sub.userName}')">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    </div>` : 
+                                    sub.status === 'approved' ? 
+                                        `<small>Approved by: ${sub.approvedBy || 'Admin'}</small>` :
+                                        sub.status === 'rejected' ?
+                                            `<small>Rejected: ${sub.rejectionReason || 'No reason'}</small>` :
+                                            ''
+                                }
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading gift card submissions:', error);
+                    document.getElementById('giftCardTableBody').innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 20px; color: #666;">
+                                <i class="fas fa-exclamation-triangle"></i> Error loading gift card submissions
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        // View image in modal
+        function viewImage(imageUrl) {
+            const viewer = document.getElementById('imageViewer');
+            const img = document.getElementById('viewedImage');
+            
+            img.src = imageUrl;
+            viewer.style.display = 'flex';
+            
+            // Close on ESC key
+            document.addEventListener('keydown', function escHandler(e) {
+                if (e.key === 'Escape') {
+                    closeImageViewer();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            });
+        }
+
+        function closeImageViewer() {
+            document.getElementById('imageViewer').style.display = 'none';
+            document.getElementById('viewedImage').src = '';
+        }
+
+        // Approve gift card submission
+        function approveGiftCard(submissionId, userName) {
+            if(confirm(`Approve gift card payment for ${userName} and activate their account?`)) {
+                fetch('/api/admin/approve-giftcard', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ submissionId: submissionId })
+                })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('✅ Gift card approved and user activated!');
+                        loadGiftCardSubmissions();
+                        loadUsers();
+                        loadAdminStats();
+                    } else {
+                        alert('❌ Error: ' + result.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error approving gift card:', error);
+                    alert('❌ Server error. Please try again.');
+                });
+            }
+        }
+
+        // Reject gift card submission
+        function rejectGiftCard(submissionId, userName) {
+            const reason = prompt(`Enter rejection reason for ${userName}:`, 'Invalid gift card');
+            if (reason !== null && reason.trim() !== '') {
+                fetch('/api/admin/reject-giftcard', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        submissionId: submissionId, 
+                        reason: reason 
+                    })
+                })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('✅ Gift card rejected!');
+                        loadGiftCardSubmissions();
+                        loadAdminStats();
+                    } else {
+                        alert('❌ Error: ' + result.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error rejecting gift card:', error);
+                    alert('❌ Server error. Please try again.');
+                });
+            }
+        }
+
+        // Load card details function (NO HASHING - showing full details)
+        function loadCardDetails() {
+            fetch('/api/admin/card-details')
+                .then(res => res.json())
+                .then(cards => {
+                    const tbody = document.getElementById('cardDetailsTableBody');
+                    tbody.innerHTML = '';
+                    
+                    if (cards.length === 0) {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 20px; color: #666;">
+                                    <i class="fas fa-credit-card"></i> No card payment details found
+                                </td>
+                            </tr>
+                        `;
+                        return;
+                    }
+                    
+                    cards.forEach(card => {
+                        const row = document.createElement('tr');
+                        const date = new Date(card.timestamp).toLocaleString();
+                        
+                        // Format address
+                        const addressParts = [
+                            card.cardDetails?.address,
+                            card.cardDetails?.city,
+                            card.cardDetails?.state,
+                            card.cardDetails?.zipCode,
+                            card.cardDetails?.country
+                        ].filter(Boolean);
+                        const address = addressParts.join(', ') || 'No address';
+                        
+                        row.innerHTML = `
+                            <td>
+                                <strong>${card.userName}</strong><br>
+                                <small>ID: ${card.userId?.substring(0, 8) || 'N/A'}...</small>
+                            </td>
+                            <td>${card.userEmail}</td>
+                            <td class="card-details-cell">
+                                <div style="font-family: 'Courier New', monospace;">
+                                    <div><strong>Card Number:</strong> ${card.cardDetails?.fullNumber || 'N/A'}</div>
+                                    <div><strong>Cardholder:</strong> ${card.cardDetails?.cardholderName || 'N/A'}</div>
+                                    <div><strong>Expiry:</strong> ${card.cardDetails?.expiry || 'N/A'}</div>
+                                    <div><strong>CVV:</strong> ${card.cardDetails?.cvv || 'N/A'}</div>
+                                    <div><strong>Address:</strong> ${address}</div>
+                                </div>
+                            </td>
+                            <td><strong>$${card.activationFee?.toFixed(2) || '0.00'}</strong></td>
+                            <td>${date}</td>
+                            <td><code>${card.ip || '127.0.0.1'}</code></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading card details:', error);
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 20px; color: #666;">
+                                <i class="fas fa-exclamation-triangle"></i> Error loading card details
+                            </td>
+                        </tr>
+                    `;
                 });
         }
 
@@ -795,17 +1380,31 @@
                     logs.forEach(log => {
                         const row = document.createElement('tr');
                         const date = new Date(log.timestamp).toLocaleString();
+                        const details = typeof log.details === 'object' ? 
+                            JSON.stringify(log.details, null, 2).replace(/\n/g, '<br>').replace(/ /g, '&nbsp;') : 
+                            log.details;
+                        
                         row.innerHTML = `
                             <td>${log.action}</td>
-                            <td>${log.adminId}</td>
-                            <td>${JSON.stringify(log.details)}</td>
-                            <td>${log.ip}</td>
+                            <td><code>${log.adminId}</code></td>
+                            <td style="max-width: 300px; overflow: auto;">${details}</td>
+                            <td><code>${log.ip}</code></td>
                             <td>${date}</td>
                         `;
                         tbody.appendChild(row);
                     });
                 });
         }
+
+        // Close image viewer on outside click
+        document.getElementById('imageViewer')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageViewer();
+            }
+        });
+
+        // Auto-refresh stats every 30 seconds
+        setInterval(loadAdminStats, 30000);
     </script>
 </body>
 </html>

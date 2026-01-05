@@ -1,3 +1,1 @@
-node_modules/
-data/
-.env
+S33t R3D D3LUX3 3DITION

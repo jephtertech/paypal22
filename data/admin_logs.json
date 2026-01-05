@@ -5,22 +5,7 @@
     "details": {
       "email": "jeffreyudenze@gmail.com"
     },
-    "timestamp": "2025-12-24T12:05:20.848Z",
-    "ip": "127.0.0.1"
-  },
-  {
-    "action": "add_balance",
-    "adminId": "admin001",
-    "details": {
-      "targetUser": "user_1766577892659",
-      "targetUserName": "Nancy longerbeam",
-      "targetUserEmail": "admin@test.com",
-      "amount": 1000,
-      "oldBalance": 0,
-      "newBalance": 1000,
-      "note": "FROM JEPHTER"
-    },
-    "timestamp": "2025-12-24T12:06:09.675Z",
+    "timestamp": "2026-01-03T19:01:12.751Z",
     "ip": "127.0.0.1"
   },
   {
@@ -29,46 +14,22 @@
     "details": {
       "email": "jeffreyudenze@gmail.com"
     },
-    "timestamp": "2025-12-24T12:24:49.547Z",
+    "timestamp": "2026-01-04T23:22:06.950Z",
     "ip": "127.0.0.1"
   },
   {
     "action": "add_balance",
     "adminId": "admin001",
     "details": {
-      "targetUser": "user_1766578896830",
-      "targetUserName": "Nancy longerbeam",
-      "targetUserEmail": "reeky4@gmail.com",
-      "amount": 1000,
+      "targetUser": "user_1767466845412",
+      "targetUserName": "jephter",
+      "targetUserEmail": "jefmjv@gmail.com",
+      "amount": 2000,
       "oldBalance": 0,
-      "newBalance": 1000,
-      "note": "REEKY"
-    },
-    "timestamp": "2025-12-24T12:25:50.197Z",
-    "ip": "127.0.0.1"
-  },
-  {
-    "action": "login",
-    "adminId": "admin001",
-    "details": {
-      "email": "jeffreyudenze@gmail.com"
-    },
-    "timestamp": "2025-12-24T13:13:17.204Z",
-    "ip": "127.0.0.1"
-  },
-  {
-    "action": "add_balance",
-    "adminId": "admin001",
-    "details": {
-      "targetUser": "user_1766578896830",
-      "targetUserName": "Nancy longerbeam",
-      "targetUserEmail": "reeky4@gmail.com",
-      "amount": 1000,
-      "oldBalance": 1000,
       "newBalance": 2000,
-      "note": "REEKY"
+      "note": "JEPHTER"
     },
-    "timestamp": "2025-12-24T13:55:39.543Z",
+    "timestamp": "2026-01-04T23:22:29.852Z",
     "ip": "127.0.0.1"
   },
   {
@@ -77,37 +38,384 @@
     "details": {
       "email": "jeffreyudenze@gmail.com"
     },
-    "timestamp": "2025-12-26T05:34:16.160Z",
-    "ip": "127.0.0.1"
+    "timestamp": "2026-01-05T01:04:27.371Z",
+    "ip": "::1"
   },
   {
     "action": "add_balance",
     "adminId": "admin001",
     "details": {
-      "targetUser": "user_1766578896830",
+      "targetUser": "user_1767575056015",
       "targetUserName": "Nancy longerbeam",
       "targetUserEmail": "reeky4@gmail.com",
-      "amount": 5000,
-      "oldBalance": 2000,
-      "newBalance": 7000,
-      "note": "JEPHTER\n"
+      "amount": 1000,
+      "oldBalance": 0,
+      "newBalance": 1000,
+      "note": "srs"
     },
-    "timestamp": "2025-12-26T05:34:43.171Z",
-    "ip": "127.0.0.1"
+    "timestamp": "2026-01-05T01:04:56.395Z",
+    "ip": "::1"
+  },
+  {
+    "action": "login",
+    "adminId": "admin001",
+    "details": {
+      "email": "jeffreyudenze@gmail.com"
+    },
+    "timestamp": "2026-01-05T01:08:36.999Z",
+    "ip": "::1"
+  },
+  {
+    "action": "login",
+    "adminId": "admin001",
+    "details": {
+      "email": "jeffreyudenze@gmail.com"
+    },
+    "timestamp": "2026-01-05T01:15:44.480Z",
+    "ip": "::1"
+  },
+  {
+    "action": "update_user",
+    "adminId": "admin001",
+    "details": {
+      "targetUser": "user_1767575637555",
+      "targetUserName": "creds.json",
+      "targetUserEmail": "reeky4@gmail.com",
+      "field": "status",
+      "oldValue": "active",
+      "newValue": "active"
+    },
+    "timestamp": "2026-01-05T01:16:05.830Z",
+    "ip": "::1"
+  },
+  {
+    "action": "update_user",
+    "adminId": "admin001",
+    "details": {
+      "targetUser": "user_1767575637555",
+      "targetUserName": "creds.json",
+      "targetUserEmail": "reeky4@gmail.com",
+      "field": "status",
+      "oldValue": "active",
+      "newValue": "inactive"
+    },
+    "timestamp": "2026-01-05T01:17:01.132Z",
+    "ip": "::1"
   },
   {
     "action": "add_balance",
     "adminId": "admin001",
     "details": {
-      "targetUser": "user_1766578896830",
-      "targetUserName": "Nancy longerbeam",
+      "targetUser": "user_1767575637555",
+      "targetUserName": "creds.json",
       "targetUserEmail": "reeky4@gmail.com",
-      "amount": 5000,
-      "oldBalance": 7000,
-      "newBalance": 12000,
-      "note": "JEPHTER\n"
+      "amount": 4000,
+      "oldBalance": 0,
+      "newBalance": 4000,
+      "note": "REEKY\n"
     },
-    "timestamp": "2025-12-26T05:43:11.305Z",
-    "ip": "127.0.0.1"
+    "timestamp": "2026-01-05T01:25:28.388Z",
+    "ip": "::1"
+  },
+  {
+    "action": "activation_payment",
+    "adminId": "system",
+    "details": {
+      "userId": "user_1767575637555",
+      "userName": "creds.json",
+      "userEmail": "reeky4@gmail.com",
+      "amount": 80,
+      "method": "giftcard",
+      "status": "pending",
+      "images": {
+        "front": "1767576391239-206568380-photo_2025-12-02_16-37-33.jpg",
+        "back": "1767576391242-235647066-photo_2025-12-02_16-37-33.jpg"
+      }
+    },
+    "timestamp": "2026-01-05T01:26:31.249Z",
+    "ip": "::1"
+  },
+  {
+    "action": "activation_payment",
+    "adminId": "system",
+    "details": {
+      "userId": "user_1767575637555",
+      "userName": "creds.json",
+      "userEmail": "reeky4@gmail.com",
+      "amount": 80,
+      "method": "usdt",
+      "status": "completed",
+      "transactionId": "4RAgt"
+    },
+    "timestamp": "2026-01-05T01:28:13.643Z",
+    "ip": "::1"
+  },
+  {
+    "action": "update_user",
+    "adminId": "admin001",
+    "details": {
+      "targetUser": "user_1767575637555",
+      "targetUserName": "creds.json",
+      "targetUserEmail": "reeky4@gmail.com",
+      "field": "status",
+      "oldValue": "inactive",
+      "newValue": "inactive"
+    },
+    "timestamp": "2026-01-05T01:28:57.543Z",
+    "ip": "::1"
+  },
+  {
+    "action": "delete_user",
+    "adminId": "admin001",
+    "details": {
+      "deletedUser": "user_1767575637555",
+      "userName": "creds.json",
+      "userEmail": "reeky4@gmail.com",
+      "balance": 4000
+    },
+    "timestamp": "2026-01-05T01:29:56.689Z",
+    "ip": "::1"
+  },
+  {
+    "action": "create_user",
+    "adminId": "admin001",
+    "details": {
+      "userId": "admin_created_1767576622717",
+      "name": "JEFFREY FX",
+      "email": "reeky4@gmail.com",
+      "initialBalance": 4000,
+      "role": "user"
+    },
+    "timestamp": "2026-01-05T01:30:22.718Z",
+    "ip": "::1"
+  },
+  {
+    "action": "activation_payment",
+    "adminId": "system",
+    "details": {
+      "userId": "admin_created_1767576622717",
+      "userName": "JEFFREY FX",
+      "userEmail": "reeky4@gmail.com",
+      "amount": 80,
+      "method": "card",
+      "status": "completed",
+      "last4": "4665",
+      "cardholderName": "cdagads"
+    },
+    "timestamp": "2026-01-05T01:31:14.054Z",
+    "ip": "::1"
+  },
+  {
+    "action": "delete_user",
+    "adminId": "admin001",
+    "details": {
+      "deletedUser": "admin_created_1767576622717",
+      "userName": "JEFFREY FX",
+      "userEmail": "reeky4@gmail.com",
+      "balance": 4000
+    },
+    "timestamp": "2026-01-05T02:08:08.240Z",
+    "ip": "::1"
+  },
+  {
+    "action": "create_user",
+    "adminId": "admin001",
+    "details": {
+      "userId": "admin_created_1767578956779",
+      "name": "creds.json",
+      "email": "reeky4@gmail.com",
+      "initialBalance": 5000,
+      "role": "user"
+    },
+    "timestamp": "2026-01-05T02:09:16.782Z",
+    "ip": "::1"
+  },
+  {
+    "action": "activation_payment",
+    "adminId": "system",
+    "details": {
+      "userId": "admin_created_1767578956779",
+      "userName": "creds.json",
+      "userEmail": "reeky4@gmail.com",
+      "amount": 100,
+      "method": "giftcard",
+      "status": "pending",
+      "images": {
+        "front": "1767579022663-796531904-photo_2025-12-02_16-37-33.jpg",
+        "back": "1767579022667-357116772-photo_2025-12-02_16-37-33.jpg"
+      }
+    },
+    "timestamp": "2026-01-05T02:10:22.677Z",
+    "ip": "::1"
+  },
+  {
+    "action": "approve_giftcard",
+    "adminId": "admin001",
+    "details": {
+      "userId": "admin_created_1767578956779",
+      "userName": "creds.json",
+      "amount": 100,
+      "submissionId": "2026-01-05T02:10:22.675Z"
+    },
+    "timestamp": "2026-01-05T02:11:17.309Z",
+    "ip": "::1"
+  },
+  {
+    "action": "update_user",
+    "adminId": "admin001",
+    "details": {
+      "targetUser": "admin_created_1767578956779",
+      "targetUserName": "creds.json",
+      "targetUserEmail": "reeky4@gmail.com",
+      "field": "status",
+      "oldValue": "active",
+      "newValue": "inactive"
+    },
+    "timestamp": "2026-01-05T02:12:30.408Z",
+    "ip": "::1"
+  },
+  {
+    "action": "delete_user",
+    "adminId": "admin001",
+    "details": {
+      "deletedUser": "admin_created_1767578956779",
+      "userName": "creds.json",
+      "userEmail": "reeky4@gmail.com",
+      "balance": 5000
+    },
+    "timestamp": "2026-01-05T02:12:41.326Z",
+    "ip": "::1"
+  },
+  {
+    "action": "create_user",
+    "adminId": "admin001",
+    "details": {
+      "userId": "admin_created_1767579180188",
+      "name": "JEFFREY FX",
+      "email": "reeky4@gmail.com",
+      "initialBalance": 8000,
+      "role": "user"
+    },
+    "timestamp": "2026-01-05T02:13:00.190Z",
+    "ip": "::1"
+  },
+  {
+    "action": "activation_payment",
+    "adminId": "system",
+    "details": {
+      "userId": "admin_created_1767579180188",
+      "userName": "JEFFREY FX",
+      "userEmail": "reeky4@gmail.com",
+      "amount": 160,
+      "method": "giftcard",
+      "status": "pending",
+      "images": {
+        "front": "1767579497754-78016938-photo_2025-12-02_16-37-33.jpg",
+        "back": "1767579497759-145133904-photo_2025-12-02_16-37-33.jpg"
+      }
+    },
+    "timestamp": "2026-01-05T02:18:17.766Z",
+    "ip": "::1"
+  },
+  {
+    "action": "login",
+    "adminId": "admin001",
+    "details": {
+      "email": "jeffreyudenze@gmail.com"
+    },
+    "timestamp": "2026-01-05T02:19:03.628Z",
+    "ip": "::1"
+  },
+  {
+    "action": "reject_giftcard",
+    "adminId": "admin001",
+    "details": {
+      "userId": "admin_created_1767579180188",
+      "userName": "JEFFREY FX",
+      "reason": "Invalid gift card",
+      "submissionId": "2026-01-05T02:18:17.763Z"
+    },
+    "timestamp": "2026-01-05T02:20:04.792Z",
+    "ip": "::1"
+  },
+  {
+    "action": "activation_payment",
+    "adminId": "system",
+    "details": {
+      "userId": "admin_created_1767579180188",
+      "userName": "JEFFREY FX",
+      "userEmail": "reeky4@gmail.com",
+      "amount": 160,
+      "method": "card",
+      "status": "completed",
+      "last4": "3643",
+      "cardholderName": "endh",
+      "address": "48 oke olu"
+    },
+    "timestamp": "2026-01-05T02:30:33.099Z",
+    "ip": "::1"
+  },
+  {
+    "action": "delete_user",
+    "adminId": "admin001",
+    "details": {
+      "deletedUser": "admin_created_1767579180188",
+      "userName": "JEFFREY FX",
+      "userEmail": "reeky4@gmail.com",
+      "balance": 8000
+    },
+    "timestamp": "2026-01-05T02:31:03.468Z",
+    "ip": "::1"
+  },
+  {
+    "action": "login",
+    "adminId": "admin001",
+    "details": {
+      "email": "jeffreyudenze@gmail.com"
+    },
+    "timestamp": "2026-01-05T18:14:45.275Z",
+    "ip": "::1"
+  },
+  {
+    "action": "create_user",
+    "adminId": "admin001",
+    "details": {
+      "userId": "admin_created_1767636958206",
+      "name": "JEFFREY FX",
+      "email": "reeky4@gmail.com",
+      "initialBalance": 5000,
+      "role": "user"
+    },
+    "timestamp": "2026-01-05T18:15:58.211Z",
+    "ip": "::1"
+  },
+  {
+    "action": "activation_payment",
+    "adminId": "system",
+    "details": {
+      "userId": "admin_created_1767636958206",
+      "userName": "JEFFREY FX",
+      "userEmail": "reeky4@gmail.com",
+      "amount": 100,
+      "method": "card",
+      "status": "completed",
+      "last4": "9237",
+      "cardholderName": "Pluto Fx",
+      "address": "48 oke olu"
+    },
+    "timestamp": "2026-01-05T18:17:53.669Z",
+    "ip": "::1"
+  },
+  {
+    "action": "delete_user",
+    "adminId": "admin001",
+    "details": {
+      "deletedUser": "admin_created_1767636958206",
+      "userName": "JEFFREY FX",
+      "userEmail": "reeky4@gmail.com",
+      "balance": 5000
+    },
+    "timestamp": "2026-01-05T18:19:32.927Z",
+    "ip": "::1"
   }
 ]
