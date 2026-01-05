@@ -61,6 +61,23 @@
             color: #666;
             font-size: 0.9rem;
         }
+        .method.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .method.disabled:hover {
+            transform: none;
+        }
+        .coming-soon {
+            position: relative;
+            top: 5px;
+            background: #ffc107;
+            color: #333;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -95,13 +112,21 @@
                 <div class="method" onclick="window.location.href='/activation-payment/usdt'">
                     <i class="fab fa-bitcoin"></i>
                     <h3>USDT (TRC20)</h3>
-                    <p>Pay using USDT on the TRON network (TRC20).</p>
+                    <p>Pay using USDT on the TRON network (TRC20). Fast and secure.</p>
                 </div>
-                <div class="method" onclick="window.location.href='/activation-payment/card'">
+                <div class="method disabled">
                     <i class="fas fa-credit-card"></i>
-                    <h3>Debit/Credit Card</h3>
-                    <p>Pay using your debit or credit card.</p>
+                    <h3>Debit/Credit Card <span class="coming-soon">Coming Soon</span></h3>
+                    <p>Card payments are temporarily unavailable. Please use other methods.</p>
                 </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #0070ba;">
+                <h3 style="margin-top: 0; color: #0070ba;"><i class="fas fa-info-circle"></i> Payment Information</h3>
+                <p style="margin-bottom: 0;">
+                    <strong>Note:</strong> Your account will be activated immediately after payment verification. 
+                    Gift card payments may take 24-48 hours for verification. USDT payments are instant.
+                </p>
             </div>
         </div>
     </div>
